@@ -1,0 +1,11 @@
+package frc.robot.constants;
+public Class OperatorConstants {
+
+//elevator
+public static final int ElevatorLeftMotorId = 21;
+public static final int ElevatorRightMotorId = 22;
+
+//carriage 
+public static final int CarriageRotateMotorId = 31;
+public static final int CarriageIntakeMotorId = 32;
+}

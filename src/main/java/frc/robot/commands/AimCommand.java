@@ -6,8 +6,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.TunerConstants;
 import frc.robot.LimelightHelpers.RawFiducial;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimelightSubsytem;
 
