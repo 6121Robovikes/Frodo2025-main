@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,6 +19,7 @@ import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.AimCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimelightSubsytem;
+import frc.robot.commands.Odometry;
 
 public class RobotContainer {
     //private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -32,7 +34,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(TunerConstants.MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    public final static CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final LimelightSubsytem limeLight = TunerConstants.createLimeLight();
@@ -68,7 +70,23 @@ point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeft
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         //tests the aim command class
-        joystick.rightBumper().onTrue(new AimCommand(drivetrain, limeLight, 6));
+        joystick.rightBumper().onTrue(new Odometry(drivetrain, limeLight, 6));
+        
+        // while the A-button is pressed, overwrite some of the driving values with the output of our limelight methods
+    if(RobotContainer.joystick.a())
+    {
+        final var rot_limelight = limelight_aim_proportional();
+        rot = rot_limelight;
+
+        final var forward_limelight = limelight_range_proportional();
+        xSpeed = forward_limelight;
+
+        //while using Limelight, turn off field-relative driving.
+        fieldRelative = false;
+    }
+
+    m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
+      
         
         //Resets the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
